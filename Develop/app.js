@@ -20,6 +20,7 @@ const questions = [
       "Manager",
       "Engineer",
       "Intern",
+      new inquirer.Separator(),
       "I'm finished entering employees",
     ],
   },
@@ -53,7 +54,7 @@ const questions = [
   {
     type: "input",
     name: "employeeGithub",
-    message: "Please enter the Github of this employee",
+    message: "Please enter the Github username of this employee",
     when: (answers) => answers.employeeChoice === "Engineer",
   },
   {
@@ -64,9 +65,12 @@ const questions = [
   },
 ];
 function getEmployee() {
+  if (employees.length === 0) {
+    console.log("\n", "Welcome to the Team Profile Generator CLI", "\n");
+  }
   inquirer.prompt(questions).then((answers) => {
+    console.log("\n");
     if (answers.employeeChoice !== "I'm finished entering employees") {
-      getEmployee();
       switch (answers.employeeChoice) {
         case "Manager":
           newEmployee = new Manager(
@@ -98,16 +102,19 @@ function getEmployee() {
         default:
           console.log("done");
       }
+      getEmployee();
+    } else {
+      fs.writeFile(outputPath, render(employees), (err) => {
+        if (err) {
+          return console.log(err);
+        }
+      });
+      console.log("\n", "Thank you for using my application!");
     }
-    fs.writeFile(outputPath, render(employees), (err) => {
-      if (err) {
-        return console.log(err);
-      }
-      console.log("Thank you for using my application!");
-    });
   });
 }
 getEmployee();
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
