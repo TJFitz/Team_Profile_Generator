@@ -99,7 +99,12 @@ function getEmployee() {
           console.log("done");
       }
     }
-    console.log(employees);
+    fs.writeFile(outputPath, render(employees), (err) => {
+      if (err) {
+        return console.log(err);
+      }
+      console.log("Thank you for using my application!");
+    });
   });
 }
 getEmployee();
