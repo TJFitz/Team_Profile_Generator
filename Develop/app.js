@@ -9,7 +9,100 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
-
+let employees = [];
+let newEmployee;
+const questions = [
+  {
+    type: "list",
+    name: "employeeChoice",
+    message: "Which type of employee would you like to add?",
+    choices: [
+      "Manager",
+      "Engineer",
+      "Intern",
+      "I'm finished entering employees",
+    ],
+  },
+  {
+    type: "input",
+    name: "employeeName",
+    message: "Please enter the name of this employee",
+    when: (answers) =>
+      answers.employeeChoice !== "I'm finished entering employees",
+  },
+  {
+    type: "input",
+    name: "employeeId",
+    message: "Please enter the ID of this employee",
+    when: (answers) =>
+      answers.employeeChoice !== "I'm finished entering employees",
+  },
+  {
+    type: "input",
+    name: "employeeEmail",
+    message: "Please enter the email of this employee",
+    when: (answers) =>
+      answers.employeeChoice !== "I'm finished entering employees",
+  },
+  {
+    type: "input",
+    name: "employeeSchool",
+    message: "Please enter the school of this employee",
+    when: (answers) => answers.employeeChoice === "Intern",
+  },
+  {
+    type: "input",
+    name: "employeeGithub",
+    message: "Please enter the Github of this employee",
+    when: (answers) => answers.employeeChoice === "Engineer",
+  },
+  {
+    type: "input",
+    name: "employeeOffice",
+    message: "Please enter the office number of this employee",
+    when: (answers) => answers.employeeChoice === "Manager",
+  },
+];
+function getEmployee() {
+  inquirer.prompt(questions).then((answers) => {
+    if (answers.employeeChoice !== "I'm finished entering employees") {
+      getEmployee();
+      switch (answers.employeeChoice) {
+        case "Manager":
+          newEmployee = new Manager(
+            answers.employeeName,
+            answers.employeeId,
+            answers.employeeEmail,
+            answers.employeeOffice
+          );
+          employees.push(newEmployee);
+          break;
+        case "Engineer":
+          newEmployee = new Engineer(
+            answers.employeeName,
+            answers.employeeId,
+            answers.employeeEmail,
+            answers.employeeGithub
+          );
+          employees.push(newEmployee);
+          break;
+        case "Intern":
+          newEmployee = new Intern(
+            answers.employeeName,
+            answers.employeeId,
+            answers.employeeEmail,
+            answers.employeeSchool
+          );
+          employees.push(newEmployee);
+          break;
+        default:
+          console.log("done");
+      }
+    }
+    console.log(employees);
+  });
+}
+getEmployee();
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
